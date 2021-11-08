@@ -85,8 +85,10 @@ unsafe fn run(
 
 fn mat_mat(be: &mut Bencher, &(dt, m, k, n, cold): &(DatumType, usize, usize, usize, bool)) {
     let mm = tract_linalg::ops().mmm(dt, dt, dt, Some(m), Some(k), Some(n)).unwrap();
-    let pa = Tensor::zero_aligned_dt(dt, &[mm.a_pack(k).len(m)], mm.a_pack(k).alignment()).unwrap();
-    let pb = Tensor::zero_aligned_dt(dt, &[mm.b_pack(k).len(n)], mm.b_pack(k).alignment()).unwrap();
+    let pa =
+        Tensor::zero_aligned_dt(dt, &[mm.a_pack().len(k, m)], mm.a_pack().alignment()).unwrap();
+    let pb =
+        Tensor::zero_aligned_dt(dt, &[mm.b_pack().len(k, n)], mm.b_pack().alignment()).unwrap();
     unsafe {
         run(
             m,
@@ -104,7 +106,8 @@ fn mat_mat(be: &mut Bencher, &(dt, m, k, n, cold): &(DatumType, usize, usize, us
 fn mat_vec(be: &mut Bencher, &(dt, m, k, n, cold): &(DatumType, usize, usize, usize, bool)) {
     assert_eq!(n, 1);
     let mm = tract_linalg::ops().mmm(dt, dt, dt, Some(m), Some(k), Some(n)).unwrap();
-    let pa = Tensor::zero_aligned_dt(dt, &[mm.a_pack(k).len(m)], mm.a_pack(k).alignment()).unwrap();
+    let pa =
+        Tensor::zero_aligned_dt(dt, &[mm.a_pack().len(k, m)], mm.a_pack().alignment()).unwrap();
     let pb = Tensor::zero_dt(dt, &[k, 1]).unwrap();
     unsafe {
         run(
@@ -138,8 +141,8 @@ fn direct_conv_mmm_f32(be: &mut Bencher, geo: &ConvGeo) {
         let (m, k, n, rows_offsets, cols_offsets, b_len) = direct_conv_geo(geo);
         let mm = tract_linalg::ops().mmm(F32, F32, F32, Some(m), Some(k), Some(n)).unwrap();
         let pa =
-            Tensor::zero_aligned::<f32>(&[mm.a_pack(k).len(m)], mm.a_pack(k).alignment()).unwrap();
-        let pb = Tensor::zero_aligned::<f32>(&[b_len], mm.b_pack(k).alignment()).unwrap();
+            Tensor::zero_aligned::<f32>(&[mm.a_pack().len(k, m)], mm.a_pack().alignment()).unwrap();
+        let pb = Tensor::zero_aligned::<f32>(&[b_len], mm.b_pack().alignment()).unwrap();
         let mut c = Tensor::zero::<f32>(&[m, n]).unwrap();
         mm.b_from_data_and_offsets(pb.datum_type().size_of(), &rows_offsets, &cols_offsets);
         be.iter(move || {
@@ -170,8 +173,8 @@ fn direct_conv_i8(be: &mut Bencher, geo: &ConvGeo) {
         let (m, k, n, rows_offsets, cols_offsets, b_len) = direct_conv_geo(geo);
         let mm = tract_linalg::ops().mmm(I8, I8, I8, Some(m), Some(k), Some(n)).unwrap();
         let pa =
-            Tensor::zero_aligned::<i8>(&[mm.a_pack(k).len(m)], mm.a_pack(k).alignment()).unwrap();
-        let pb = Tensor::zero_aligned::<i8>(&[b_len], mm.b_pack(k).alignment()).unwrap();
+            Tensor::zero_aligned::<i8>(&[mm.a_pack().len(k, m)], mm.a_pack().alignment()).unwrap();
+        let pb = Tensor::zero_aligned::<i8>(&[b_len], mm.b_pack().alignment()).unwrap();
         let mut c = Tensor::zero::<i8>(&[m, n]).unwrap();
         mm.b_from_data_and_offsets(pb.datum_type().size_of(), &rows_offsets, &cols_offsets);
         be.iter(move || {
