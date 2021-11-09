@@ -2,6 +2,7 @@
 pub(crate) mod fuse;
 #[macro_use]
 pub(crate) mod kernel;
+pub(crate) mod input_store;
 #[macro_use]
 pub(crate) mod mmm;
 mod scratch;
@@ -12,6 +13,7 @@ pub mod tests;
 
 pub use fuse::*;
 pub use kernel::*;
+pub use input_store::*;
 pub use mmm::*;
 pub use scratch::*;
 pub use storage::*;
