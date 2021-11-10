@@ -97,7 +97,7 @@ fn mat_mat(be: &mut Bencher, &(dt, m, k, n, cold): &(DatumType, usize, usize, us
             be,
             &*mm,
             mm.a_packed(dt.size_of(), k).wrap(&pa.view()),
-            mm.b_packed(dt.size_of(), k).wrap(&pb.view()),
+            mm.b_packed(dt.size_of(), k).wrap(&pb.view()).unwrap(),
             cold,
         );
     }
@@ -117,7 +117,7 @@ fn mat_vec(be: &mut Bencher, &(dt, m, k, n, cold): &(DatumType, usize, usize, us
             be,
             &*mm,
             mm.a_packed(dt.size_of(), k).wrap(&pa.view()),
-            mm.b_packed(dt.size_of(), k).wrap(&pb.view()),
+            mm.b_packed(dt.size_of(), k).wrap(&pb.view()).unwrap(),
             cold,
         );
     }
@@ -158,7 +158,7 @@ fn direct_conv_mmm_f32(be: &mut Bencher, geo: &ConvGeo) {
                                 &rows_offsets,
                                 &cols_offsets,
                             )
-                            .wrap(&pb.view()),
+                            .wrap(&pb.view()).unwrap(),
                         k,
                     },
                     FusedSpec::Store(mm.c_view().wrap(&c.view_mut())),
@@ -190,7 +190,7 @@ fn direct_conv_i8(be: &mut Bencher, geo: &ConvGeo) {
                                 &rows_offsets,
                                 &cols_offsets,
                             )
-                            .wrap(&pb.view()),
+                            .wrap(&pb.view()).unwrap(),
                         k,
                     },
                     FusedSpec::Store(mm.c_view().wrap(&c.view_mut())),
